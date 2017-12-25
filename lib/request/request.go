@@ -1,4 +1,4 @@
-package emas
+package request
 
 type TransactionInit struct {
 	CustomerId 		string 		`json:"customer_id"`

@@ -3,6 +3,7 @@ package endpoint
 const (
 	// GET
 	CustomerDetail 		= "/customer/"
+	Product 			= "/product"
 	Transaction 		= "/transaction"
 	TransactionDetail 	= "/transaction/"
 
@@ -13,4 +14,6 @@ const (
 	SellInit			= "/sell-gold"
 	SellConfirm			= "/sell-gold-confirm"
 	SellReversal		= "/sell-gold-reverse"
+	WithdrawInit		= "/withdraw-gold"
+	WithdrawConfirm		= "/withdraw-gold-confirm"
 )
