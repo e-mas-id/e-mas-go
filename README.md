@@ -23,6 +23,8 @@ library for thirdparty connect to e-mas API
     if err != nil {
         // do something for error
     }
+
+    // do something with resp
 ```
 
 You can handle the resp object or extract it into response.Transaction if you want
