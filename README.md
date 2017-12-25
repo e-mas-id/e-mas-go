@@ -3,8 +3,6 @@ library for thirdparty connect to e-mas API
 
 ## Example Usage
 
-### Core Gateway
-
 ```go
     cli := emas.NewClient()
     cli.AppId 		= "APPLICATION ID FROM US"
