@@ -7,8 +7,6 @@ import (
 	"io"
 	"net/http"
 	"io/ioutil"
-	"encoding/json"
-	"emas/lib/security"
 )
 
 type Client struct {
@@ -45,14 +43,14 @@ func (c *Client) NewRequest(method string, fullPath string, body io.Reader) (*ht
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("App-Id", c.AppId)
 	req.Header.Add("Timestamp", t.String())
-	req.Header.Add("Signature", security.ShaOneEncrypt(security.Md5Encrypt(c.AppId + t.String() + c.SecretKey)))
+	req.Header.Add("Signature", ShaOneEncrypt(Md5Encrypt(c.AppId + t.String() + c.SecretKey)))
 
 	return req, nil
 }
 
 func (c *Client) ExecuteRequest(req *http.Request) ([]byte, error) {
 	if c.Debug {
-		c.Logger.Println("Request ", req.Method, ": ", req.URL.Host, req.URL.Path)
+		c.Logger.Println("Request ", req.Method, ": ", req.URL.Host + req.URL.Path)
 	}
 
 	start := time.Now()
@@ -80,7 +78,7 @@ func (c *Client) ExecuteRequest(req *http.Request) ([]byte, error) {
 	}
 
 	if c.Debug {
-		c.Logger.Println("API response: ", resBody)
+		c.Logger.Println("API response: ", string(resBody))
 	}
 
 	return resBody, nil

@@ -1,13 +1,21 @@
-package security
+package emas
 
 import (
-	"crypto/sha1"
-	"crypto/sha512"
-	"crypto/sha256"
+	"crypto/md5"
 	"encoding/hex"
+	"crypto/sha1"
+	"crypto/sha256"
+	"crypto/sha512"
 	"crypto/hmac"
 	"fmt"
 )
+
+func Md5Encrypt(text string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(text))
+	return hex.EncodeToString(hasher.Sum(nil))
+}
+
 
 func ShaOneEncrypt(s string) (string) {
 	h := sha1.New()
