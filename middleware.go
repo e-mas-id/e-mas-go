@@ -42,7 +42,7 @@ func (g *Middleware) BuyInit(req *ReqTransactionInit) (SuccessResponse, error) {
 		g.Client.Logger.Println(error.ErrorMessage)
 		return resp, errors.New(error.ErrorMessage)
 	}
-
+ 
 	return resp, nil
 }
 
