@@ -17,7 +17,7 @@ func (c *Middleware) Call(method, path string, body io.Reader) ([]byte, error) {
 		path = "/" + path
 	}
 
-	path = "http://php7.orori.com:11029/v1/thirdparty" + path
+	path = "https://oroconnect-dev.e-mas.com/v2/thirdparty" + path
 	if c.Client.Environment == "prod" {
 		path = "" + path
 	}
