@@ -14,7 +14,7 @@ type ReqTransactionInit struct {
 }
 
 type ReqTransactionConfirm struct {
-	CustomerId 			string 		`json:"customer_id"`
+	MerchantCustomerId  string 		`json:"merchant_customer_id"`
 	PaymentId 			string 		`json:"payment_id"`
 	VendorTransactionId string 		`json:"vendor_transaction_id"`
 }
