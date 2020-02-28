@@ -20,6 +20,7 @@ func (c *Middleware) Call(method, path string, body io.Reader) ([]byte, error) {
 		path = "/" + path
 	}
 
+
 	path = EMAS_DEVELOPMENT + path
 	if c.Client.Environment == "prod" {
 		path = EMAS_PRODUCTION + path
@@ -45,7 +46,7 @@ func (g *Middleware) BuyInit(req *ReqTransactionInit) (SuccessResponse, error) {
 		g.Client.Logger.Println(error.ErrorMessage)
 		return resp, errors.New(error.ErrorMessage)
 	}
-
+ 
 	return resp, nil
 }
 
