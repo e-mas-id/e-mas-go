@@ -12,14 +12,17 @@ type Middleware struct {
 	Client Client
 }
 
+const EMAS_DEVELOPMENT   = "https://oroconnect-dev.e-mas.com/v2/thirdparty"
+const EMAS_PRODUCTION    = ""
+
 func (c *Middleware) Call(method, path string, body io.Reader) ([]byte, error) {
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
 
-	path = "https://oroconnect-dev.e-mas.com/v2/thirdparty" + path
+	path = EMAS_DEVELOPMENT + path
 	if c.Client.Environment == "prod" {
-		path = "" + path
+		path = EMAS_PRODUCTION + path
 	}
 
 	return c.Client.Call(method, path, body)
