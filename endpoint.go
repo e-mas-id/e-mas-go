@@ -16,4 +16,5 @@ const (
 	EndpointSellReversal		= "/sell-gold-reverse"
 	EndpointWithdrawInit		= "/withdraw-gold"
 	EndpointWithdrawConfirm		= "/withdraw-gold-confirm"
+	EndpointWithdrawCancel		= "/withdraw-gold-cancel"
 )

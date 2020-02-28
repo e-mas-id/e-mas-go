@@ -154,3 +154,68 @@ func (g *Middleware) SellReverse(req *ReqTransactionCancel) (SuccessResponse, er
 
 	return resp, nil
 }
+
+
+func (g *Middleware) WithdrawInit(req *ReqTransactionInit) (SuccessResponse, error) {
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	jsonReq, _ 	:= json.Marshal(req)
+	
+	body, err := g.Call("POST", EndpointWithdrawInit, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+
+func (g *Middleware) WithdrawConfirm(req *ReqTransactionConfirm) (SuccessResponse, error) {
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	jsonReq, _ 	:= json.Marshal(req)
+	
+	body, err := g.Call("POST", EndpointWithdrawConfirm, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) WithdrawCancel(req *ReqTransactionCancel) (SuccessResponse, error) {
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	jsonReq, _ 	:= json.Marshal(req)
+	
+	body, err := g.Call("POST", EndpointWithdrawCancel, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
