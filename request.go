@@ -19,6 +19,12 @@ type ReqTransactionConfirm struct {
 	VendorTransactionId string 		`json:"vendor_transaction_id"`
 }
 
+type ReqTransactionCancel struct {
+	MerchantCustomerId  string 		`json:"merchant_customer_id"`
+	PaymentId 			string 		`json:"payment_id"`
+	VendorTransactionId string 		`json:"vendor_transaction_id"`
+}
+
 type TransCustomer struct {
 	MerchantCustomerId       string     `json:"merchant_customer_id"`
 	Handphone		         string		`json:"handphone"`

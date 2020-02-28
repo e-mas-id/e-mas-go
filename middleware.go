@@ -1,11 +1,11 @@
 package emas
 
 import (
-	"encoding/json"
 	"bytes"
+	"encoding/json"
+	"errors"
 	"io"
 	"strings"
-	"errors"
 )
 
 type Middleware struct {
@@ -71,7 +71,7 @@ func (g *Middleware) BuyConfirm(req *ReqTransactionConfirm) (SuccessResponse, er
 	return resp, nil
 }
 
-func (g *Middleware) BuyCancel(req *ReqTransactionConfirm) (SuccessResponse, error) {
+func (g *Middleware) BuyCancel(req *ReqTransactionCancel) (SuccessResponse, error) {
 	resp 		:= SuccessResponse{}
 	error 		:= ErrorResponse{}
 	jsonReq, _ 	:= json.Marshal(req)
@@ -134,7 +134,7 @@ func (g *Middleware) SellConfirm(req *ReqTransactionConfirm) (SuccessResponse, e
 	return resp, nil
 }
 
-func (g *Middleware) SellReverse(req *ReqTransactionConfirm) (SuccessResponse, error) {
+func (g *Middleware) SellReverse(req *ReqTransactionCancel) (SuccessResponse, error) {
 	resp 		:= SuccessResponse{}
 	error 		:= ErrorResponse{}
 	jsonReq, _ 	:= json.Marshal(req)
