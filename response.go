@@ -60,6 +60,7 @@ type TransactionWithdraw struct {
 	ShippingCompany int 							`json:"shipping_company"` // 1 = JNE_REG, 2 = JNE_YES, 12 = RPX_NDP
 	ShippingFee		int								`json:"shipping_fee"`
 	ShippingCode	string							`json:"shipping_code"`
+	Insurance       int                             `json:"insurance"`
 	Detail			[]*TransactionWithdrawDetail	`json:"detail"`
 }
 
