@@ -11,6 +11,7 @@ type ReqTransactionInit struct {
 	Amount                   int            `json:"amount"`
 	Insurance 	             int 		    `json:"insurance"`
 	Birthdate                string         `json:"birthdate"`
+	TransactionWithdraw
 }
 
 type ReqTransactionConfirm struct {
