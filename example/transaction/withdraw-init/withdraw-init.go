@@ -8,8 +8,8 @@ import (
 func main(){
 	
 	client             := emas.NewClient()
-	client.AppId        = "TOKOPEDIA"
-	client.SecretKey    = "1b111ff465886f7220972d70cbf010f90d372414"
+	client.AppId        = "{YOUR-APP-ID}"
+	client.SecretKey    = "{YOUR-SECRET-KEY}"
 	client.Environment  = "dev"
 	client.Debug        = true
 	
