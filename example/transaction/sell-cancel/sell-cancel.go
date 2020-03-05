@@ -19,7 +19,7 @@ func main(){
 	
 	req := &emas.ReqTransactionCancel{
 		MerchantCustomerId  :"{YOUR-CUSTOMER-ID}",
-		PaymentId           :"{PAYMENT-ID-FROM-BUY-INIT}",
+		PaymentId           :"{PAYMENT-ID-FROM-SELL-INIT}",
 		VendorTransactionId :"{YOUR-UNIQUE-TRANSACTION-ID}",
 	}
 	

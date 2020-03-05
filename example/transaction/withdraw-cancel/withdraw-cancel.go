@@ -17,13 +17,13 @@ func main(){
 		Client:client,
 	}
 	
-	req := &emas.ReqTransactionConfirm{
+	req := &emas.ReqTransactionCancel{
 		MerchantCustomerId  :"{YOUR-CUSTOMER-ID}",
-		PaymentId           :"{PAYMENT-ID-FROM-SELL-INIT}",
+		PaymentId           :"{PAYMENT-ID-FROM-WITHDRAW-INIT}",
 		VendorTransactionId :"{YOUR-UNIQUE-TRANSACTION-ID}",
 	}
 	
-	res,err := midleware.SellConfirm(req)
+	res,err := midleware.WithdrawCancel(req)
 	if err != nil{
 		fmt.Println(err.Error())
 	}
