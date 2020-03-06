@@ -37,3 +37,11 @@ type TransCustomer struct {
 	Gender                   string     `json:"gender"`
 	Birthdate                string     `json:"birthdate"`
 }
+
+type  ProductLogReq struct {
+	Page        int     `json:"page"`
+	Type        string  `json:"type"`
+	StartDate   string  `json:"start_date"`
+	EndDate     string  `json:"end_date"`
+	Limit       int     `json:"limit"`
+}

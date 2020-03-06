@@ -3,7 +3,8 @@ package emas
 const (
 	// GET
 	EndpointCustomerDetail 		= "/customer/"
-	EndpointProduct 			= "/product"
+	EndpointProductList 		= "/product"
+	EndpointProductLog   		= "/product-log"
 	EndpointTransaction 		= "/transaction"
 	EndpointTransactionDetail 	= "/transaction/"
 

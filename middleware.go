@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -12,7 +14,7 @@ type Middleware struct {
 	Client Client
 }
 
-const EMAS_DEVELOPMENT   = "https://oroconnect-dev.e-mas.com/v2/thirdparty"
+const EMAS_DEVELOPMENT   = "http://localhost:11021/v2/thirdparty"
 const EMAS_PRODUCTION    = ""
 
 func (c *Middleware) Call(method, path string, body io.Reader) ([]byte, error) {
@@ -205,6 +207,68 @@ func (g *Middleware) WithdrawCancel(req *ReqTransactionCancel) (SuccessResponse,
 	jsonReq, _ 	:= json.Marshal(req)
 	
 	body, err := g.Call("POST", EndpointWithdrawCancel, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) ProductList()(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	
+	body, err := g.Call("GET", EndpointProductList, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) ProductLog(req *ProductLogReq)(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	
+	extraParam := "?param=1"
+	
+	if req.Type != ""{
+		extraParam += "&type="+req.Type
+	}
+	
+	if req.StartDate != ""{
+		extraParam += "&start_date="+url.QueryEscape(req.StartDate)
+	}
+	
+	if req.EndDate != ""{
+		extraParam += "&end_date="+url.QueryEscape(req.EndDate)
+	}
+	
+	if req.Page != 0 {
+		extraParam += "&page="+strconv.Itoa(req.Page)
+	}
+	
+	if req.Limit != 0 {
+		extraParam += "&limit="+strconv.Itoa(req.Limit)
+	}
+	
+	body, err := g.Call("GET", EndpointProductLog+extraParam, bytes.NewBuffer([]byte("")))
 	if err != nil {
 		g.Client.Logger.Println("Error sell init: ", err)
 		return resp, err
