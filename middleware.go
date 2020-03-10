@@ -14,7 +14,7 @@ type Middleware struct {
 	Client Client
 }
 
-const EMAS_DEVELOPMENT   = "http://localhost:11021/v2/thirdparty"
+const EMAS_DEVELOPMENT   = "https://oroconnect-dev.e-mas.com/v2/thirdparty"
 const EMAS_PRODUCTION    = ""
 
 func (c *Middleware) Call(method, path string, body io.Reader) ([]byte, error) {
@@ -279,6 +279,24 @@ func (g *Middleware) ProductLog(req *ProductLogReq)(SuccessResponse,error){
 	if error.ErrorMessage != "" {
 		g.Client.Logger.Println(error.ErrorMessage)
 		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) CustomerProfile(merchant_customer_id string)(resp SuccessResponse,err error){
+	
+	body, err := g.Call("GET", EndpointCustomerDetail+"/"+merchant_customer_id, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &err)
+	if err != nil {
+		g.Client.Logger.Println(err.Error())
+		return resp, errors.New(err.Error())
 	}
 	
 	return resp, nil
