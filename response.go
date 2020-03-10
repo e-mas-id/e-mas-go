@@ -2,28 +2,6 @@ package emas
 
 import "time"
 
-//{
-//	"code": 201,
-//	"type": "object",
-//	"data": {
-//		"payment_id": "cdc360ab9568743c2e03c8524495e26ea7c449dd",
-//		"description": "Buy",
-//		"balance": 90.02,
-//		"weight": 1,
-//		"price": 557325,
-//		"admin_fee": 0,
-//		"price_per_gram": 557325,
-//		"status": 5,
-//		"payment_status": 5,
-//		"created_at": "2017-12-25T13:07:02.921325787+07:00"
-//	},
-//	"total": 1,
-//	"first_page": "",
-//	"last_page": "",
-//	"next_page": "",
-//	"timestamp": "2017-12-25T13:07:02.930990497+07:00"
-//}
-
 type SuccessResponse struct {
 	Code 			int			`json:"code"`
 	Type			string		`json:"type"`
@@ -82,6 +60,7 @@ type TransactionWithdraw struct {
 	ShippingCompany int 							`json:"shipping_company"` // 1 = JNE_REG, 2 = JNE_YES, 12 = RPX_NDP
 	ShippingFee		int								`json:"shipping_fee"`
 	ShippingCode	string							`json:"shipping_code"`
+	Insurance       int                             `json:"insurance"`
 	Detail			[]*TransactionWithdrawDetail	`json:"detail"`
 }
 

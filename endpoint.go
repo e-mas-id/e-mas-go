@@ -3,9 +3,12 @@ package emas
 const (
 	// GET
 	EndpointCustomerDetail 		= "/customer/"
-	EndpointProduct 			= "/product"
+	EndpointProductList 		= "/product"
+	EndpointProductLog   		= "/product-log"
 	EndpointTransaction 		= "/transaction"
 	EndpointTransactionDetail 	= "/transaction/"
+	EndpointShippingCode        = "/shipping/init"
+	EndpointShippingTracking    = "/shipping/tracking"
 
 	// POST
 	EndpointBuyInit 			= "/buy-gold"
@@ -16,4 +19,6 @@ const (
 	EndpointSellReversal		= "/sell-gold-reverse"
 	EndpointWithdrawInit		= "/withdraw-gold"
 	EndpointWithdrawConfirm		= "/withdraw-gold-confirm"
+	EndpointWithdrawCancel		= "/withdraw-cancel"
+	EndpointCalculatorProduct   = "/calculator/product"
 )

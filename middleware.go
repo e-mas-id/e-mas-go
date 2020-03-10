@@ -1,27 +1,48 @@
 package emas
 
 import (
-	"encoding/json"
 	"bytes"
-	"io"
-	"strings"
+	"encoding/json"
 	"errors"
+	"io"
+	"net/url"
+	"strconv"
+	"strings"
 )
 
 type Middleware struct {
 	Client Client
 }
 
+const EMAS_DEVELOPMENT   = "https://oroconnect-dev.e-mas.com/v2/thirdparty"
+const EMAS_PRODUCTION    = ""
+
 func (c *Middleware) Call(method, path string, body io.Reader) ([]byte, error) {
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
 
-	path = "http://php7.orori.com:11029/v1/thirdparty" + path
+
+	path = EMAS_DEVELOPMENT + path
 	if c.Client.Environment == "prod" {
-		path = "" + path
+		path = EMAS_PRODUCTION + path
 	}
 
+	return c.Client.Call(method, path, body)
+}
+
+
+func (c *Middleware) CallPublic(method, path string, body io.Reader) ([]byte, error) {
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+	
+	
+	path = strings.Replace(EMAS_DEVELOPMENT,"/thirdparty","",-1) + path
+	if c.Client.Environment == "prod" {
+		path = strings.Replace(EMAS_PRODUCTION,"/thirdparty","",-1) + path
+	}
+	
 	return c.Client.Call(method, path, body)
 }
 
@@ -42,7 +63,7 @@ func (g *Middleware) BuyInit(req *ReqTransactionInit) (SuccessResponse, error) {
 		g.Client.Logger.Println(error.ErrorMessage)
 		return resp, errors.New(error.ErrorMessage)
 	}
-
+ 
 	return resp, nil
 }
 
@@ -67,7 +88,7 @@ func (g *Middleware) BuyConfirm(req *ReqTransactionConfirm) (SuccessResponse, er
 	return resp, nil
 }
 
-func (g *Middleware) BuyCancel(req *ReqTransactionConfirm) (SuccessResponse, error) {
+func (g *Middleware) BuyCancel(req *ReqTransactionCancel) (SuccessResponse, error) {
 	resp 		:= SuccessResponse{}
 	error 		:= ErrorResponse{}
 	jsonReq, _ 	:= json.Marshal(req)
@@ -130,7 +151,7 @@ func (g *Middleware) SellConfirm(req *ReqTransactionConfirm) (SuccessResponse, e
 	return resp, nil
 }
 
-func (g *Middleware) SellReverse(req *ReqTransactionConfirm) (SuccessResponse, error) {
+func (g *Middleware) SellReverse(req *ReqTransactionCancel) (SuccessResponse, error) {
 	resp 		:= SuccessResponse{}
 	error 		:= ErrorResponse{}
 	jsonReq, _ 	:= json.Marshal(req)
@@ -148,5 +169,280 @@ func (g *Middleware) SellReverse(req *ReqTransactionConfirm) (SuccessResponse, e
 		return resp, errors.New(error.ErrorMessage)
 	}
 
+	return resp, nil
+}
+
+
+func (g *Middleware) WithdrawInit(req *ReqTransactionInit) (SuccessResponse, error) {
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	jsonReq, _ 	:= json.Marshal(req)
+	
+	body, err := g.Call("POST", EndpointWithdrawInit, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+
+func (g *Middleware) WithdrawConfirm(req *ReqTransactionConfirm) (SuccessResponse, error) {
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	jsonReq, _ 	:= json.Marshal(req)
+	
+	body, err := g.Call("POST", EndpointWithdrawConfirm, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) WithdrawCancel(req *ReqTransactionCancel) (SuccessResponse, error) {
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	jsonReq, _ 	:= json.Marshal(req)
+	
+	body, err := g.Call("POST", EndpointWithdrawCancel, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) ProductList()(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	
+	body, err := g.Call("GET", EndpointProductList, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) ProductLog(req *ProductLogReq)(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	
+	extraParam := "?param=1"
+	
+	if req.Type != ""{
+		extraParam += "&type="+req.Type
+	}
+	
+	if req.StartDate != ""{
+		extraParam += "&start_date="+url.QueryEscape(req.StartDate)
+	}
+	
+	if req.EndDate != ""{
+		extraParam += "&end_date="+url.QueryEscape(req.EndDate)
+	}
+	
+	if req.Page != 0 {
+		extraParam += "&page="+strconv.Itoa(req.Page)
+	}
+	
+	if req.Limit != 0 {
+		extraParam += "&limit="+strconv.Itoa(req.Limit)
+	}
+	
+	body, err := g.Call("GET", EndpointProductLog+extraParam, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) CustomerProfile(merchant_customer_id string)(resp SuccessResponse,err error){
+	
+	body, err := g.Call("GET", EndpointCustomerDetail+"/"+merchant_customer_id, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &err)
+	if err != nil {
+		g.Client.Logger.Println(err.Error())
+		return resp, errors.New(err.Error())
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) TransactionList(req *TransactionListReq)(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	
+	extraParam := "?merchant_customer_id="+url.QueryEscape(req.MerchantCustomerId)
+	
+	if req.StartDate != ""{
+		extraParam += "&start_date="+url.QueryEscape(req.StartDate)
+	}
+	
+	if req.EndDate != ""{
+		extraParam += "&end_date="+url.QueryEscape(req.EndDate)
+	}
+	
+	if req.Page != 0 {
+		extraParam += "&page="+strconv.Itoa(req.Page)
+	}
+	
+	if req.Limit != 0 {
+		extraParam += "&limit="+strconv.Itoa(req.Limit)
+	}
+	
+	if req.Offset != 0 {
+		extraParam += "&offset="+strconv.Itoa(req.Offset)
+	}
+	
+	if req.OrderBy != ""{
+		extraParam += "&order_by="+req.OrderBy
+	}
+	
+	if req.Status == VarTransactionDelivered || req.Status == VarPaymentCancel || req.Status == VarTransactionPending || req.Status == VarTransactionDelivering{
+		extraParam += "&status="+strconv.Itoa(req.Status)
+	}
+	
+	body, err := g.Call("GET", EndpointTransaction+extraParam, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+
+func (g *Middleware) TransactionDetail(payment_id string)(resp SuccessResponse,err error){
+	
+	body, err := g.Call("GET", EndpointTransactionDetail+"/"+payment_id, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &err)
+	if err != nil {
+		g.Client.Logger.Println(err.Error())
+		return resp, errors.New(err.Error())
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) CalculatorProduct(req *CalculatorProductReq)(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	jsonReq,_   := json.Marshal(req)
+	
+	body, err := g.Call("POST", EndpointCalculatorProduct, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) ShippingCode()(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	
+	body, err := g.CallPublic("GET", EndpointShippingCode, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) ShippingTracking(awb_number string)(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	
+	body, err := g.CallPublic("GET", EndpointShippingTracking+"?code="+awb_number, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
 	return resp, nil
 }
