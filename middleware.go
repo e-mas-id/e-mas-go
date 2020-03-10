@@ -31,6 +31,21 @@ func (c *Middleware) Call(method, path string, body io.Reader) ([]byte, error) {
 	return c.Client.Call(method, path, body)
 }
 
+
+func (c *Middleware) CallPublic(method, path string, body io.Reader) ([]byte, error) {
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+	
+	
+	path = strings.Replace(EMAS_DEVELOPMENT,"/thirdparty","",-1) + path
+	if c.Client.Environment == "prod" {
+		path = strings.Replace(EMAS_PRODUCTION,"/thirdparty","",-1) + path
+	}
+	
+	return c.Client.Call(method, path, body)
+}
+
 func (g *Middleware) BuyInit(req *ReqTransactionInit) (SuccessResponse, error) {
 	resp 		:= SuccessResponse{}
 	error 		:= ErrorResponse{}
@@ -366,6 +381,67 @@ func (g *Middleware) TransactionDetail(payment_id string)(resp SuccessResponse,e
 	if err != nil {
 		g.Client.Logger.Println(err.Error())
 		return resp, errors.New(err.Error())
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) CalculatorProduct(req *CalculatorProductReq)(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	jsonReq,_   := json.Marshal(req)
+	
+	body, err := g.Call("POST", EndpointCalculatorProduct, bytes.NewBuffer(jsonReq))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) ShippingCode()(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	
+	body, err := g.CallPublic("GET", EndpointShippingCode, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+func (g *Middleware) ShippingTracking(awb_number string)(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	
+	body, err := g.CallPublic("GET", EndpointShippingTracking+"?code="+awb_number, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
 	}
 	
 	return resp, nil

@@ -7,6 +7,8 @@ const (
 	EndpointProductLog   		= "/product-log"
 	EndpointTransaction 		= "/transaction"
 	EndpointTransactionDetail 	= "/transaction/"
+	EndpointShippingCode        = "/shipping/init"
+	EndpointShippingTracking    = "/shipping/tracking"
 
 	// POST
 	EndpointBuyInit 			= "/buy-gold"
@@ -18,4 +20,5 @@ const (
 	EndpointWithdrawInit		= "/withdraw-gold"
 	EndpointWithdrawConfirm		= "/withdraw-gold-confirm"
 	EndpointWithdrawCancel		= "/withdraw-cancel"
+	EndpointCalculatorProduct   = "/calculator/product"
 )

@@ -56,3 +56,8 @@ type TransactionListReq struct {
 	OrderBy             string  `json:"order_by"`
 	MerchantCustomerId  string  `json:"merchant_customer_id"`
 }
+
+type CalculatorProductReq struct {
+	Value   float64     `json:"value"`
+	Type    int         `json:"type"`
+}
