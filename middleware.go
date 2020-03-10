@@ -301,3 +301,72 @@ func (g *Middleware) CustomerProfile(merchant_customer_id string)(resp SuccessRe
 	
 	return resp, nil
 }
+
+func (g *Middleware) TransactionList(req *TransactionListReq)(SuccessResponse,error){
+	resp 		:= SuccessResponse{}
+	error 		:= ErrorResponse{}
+	
+	extraParam := "?merchant_customer_id="+url.QueryEscape(req.MerchantCustomerId)
+	
+	if req.StartDate != ""{
+		extraParam += "&start_date="+url.QueryEscape(req.StartDate)
+	}
+	
+	if req.EndDate != ""{
+		extraParam += "&end_date="+url.QueryEscape(req.EndDate)
+	}
+	
+	if req.Page != 0 {
+		extraParam += "&page="+strconv.Itoa(req.Page)
+	}
+	
+	if req.Limit != 0 {
+		extraParam += "&limit="+strconv.Itoa(req.Limit)
+	}
+	
+	if req.Offset != 0 {
+		extraParam += "&offset="+strconv.Itoa(req.Offset)
+	}
+	
+	if req.OrderBy != ""{
+		extraParam += "&order_by="+req.OrderBy
+	}
+	
+	if req.Status == VarTransactionDelivered || req.Status == VarPaymentCancel || req.Status == VarTransactionPending || req.Status == VarTransactionDelivering{
+		extraParam += "&status="+strconv.Itoa(req.Status)
+	}
+	
+	body, err := g.Call("GET", EndpointTransaction+extraParam, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &error)
+	if error.ErrorMessage != "" {
+		g.Client.Logger.Println(error.ErrorMessage)
+		return resp, errors.New(error.ErrorMessage)
+	}
+	
+	return resp, nil
+}
+
+
+func (g *Middleware) TransactionDetail(payment_id string)(resp SuccessResponse,err error){
+	
+	body, err := g.Call("GET", EndpointTransactionDetail+"/"+payment_id, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		g.Client.Logger.Println("Error sell init: ", err)
+		return resp, err
+	}
+	
+	json.Unmarshal(body, &resp)
+	json.Unmarshal(body, &err)
+	if err != nil {
+		g.Client.Logger.Println(err.Error())
+		return resp, errors.New(err.Error())
+	}
+	
+	return resp, nil
+}

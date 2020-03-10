@@ -45,3 +45,14 @@ type  ProductLogReq struct {
 	EndDate     string  `json:"end_date"`
 	Limit       int     `json:"limit"`
 }
+
+type TransactionListReq struct {
+	Page                int     `json:"page"`
+	Offset              int     `json:"offset"`
+	Limit               int     `json:"limit"`
+	Status              int     `json:"status"`
+	StartDate           string  `json:"start_date"`
+	EndDate             string  `json:"end_date"`
+	OrderBy             string  `json:"order_by"`
+	MerchantCustomerId  string  `json:"merchant_customer_id"`
+}

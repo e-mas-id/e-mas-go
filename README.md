@@ -38,6 +38,6 @@ library for thirdparty connect to e-mas API
     // do something with res
 ```
 
-You can handle the res object or extract it into emas.Transaction if you want
+You can handle the <b>res</b> object or extract it into emas.Transaction if you want
 
 For more information and support please contact info@e-mas.com or dev@e-mas.com.
